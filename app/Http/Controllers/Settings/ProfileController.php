@@ -9,6 +9,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -27,10 +28,18 @@ class ProfileController extends Controller
 
     public function updateUser(Request $request): RedirectResponse
     {
-        $user=User::findOrFail($request->user_id);
-        $user->name=$request->name;
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:5'],
+            'user_id' => ['required', 'integer', Rule::exists(User::class, 'id')],
+        ]);
+
+        $user = User::findOrFail($validated['user_id']);
+        $user->name = $validated['name'];
         $user->save();
-        return back()->with('success', 'User updated successfully');
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'User updated successfully']);
+
+        return back();
     }
 
     public function index(): Response

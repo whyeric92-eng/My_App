@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm, type PageProps } from '@inertiajs/vue3';
+import { toast } from 'vue-sonner';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
 import { dashboard } from '@/routes';
 import { route as ziggyRoute } from 'ziggy-js';
@@ -54,7 +55,7 @@ defineOptions({
     >
                 <div>
                     <div class="flex gap-x-2" v-for="user in users" :key="user.id">
-                        <DashboardUserRow :user="user" @update="router.post('/users/update', { user_id: user.id, name: user.name })"/>
+                        <DashboardUserRow :user="user" @update="router.post('/users/update', { user_id: user.id, name: user.name }, { onError: (errors) => { for (const msg of Object.values(errors)) toast.error(String(msg)); } })"/>
                     </div>
                 </div>
         <div class="grid auto-rows-min gap-4 md:grid-cols-3">
