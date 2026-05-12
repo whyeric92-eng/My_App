@@ -31,10 +31,12 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:5'],
             'user_id' => ['required', 'integer', Rule::exists(User::class, 'id')],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($request->user_id)],
         ]);
 
         $user = User::findOrFail($validated['user_id']);
         $user->name = $validated['name'];
+        $user->email=$validated['email'];
         $user->save();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'User updated successfully']);

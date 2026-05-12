@@ -16,7 +16,7 @@ const emit=defineEmits(['update'])
         <button @click="emit('update')">Update</button>
     <input v-model="user.name" type="text" id="first_name" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="username" required />
     </div>
-    <div>{{ user.email }}</div>
+    <input v-model="user.email" type="text" id="first_name" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="user email" required />
     <div>{{ user.created_at }}</div>
     <div>{{ user.updated_at }}</div>
 </template>
