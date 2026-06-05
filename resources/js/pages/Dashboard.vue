@@ -1,22 +1,30 @@
 <script setup lang="ts">
-import { Head, router, useForm, type PageProps } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
+import { Button } from '@/components/ui/button';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
 import { dashboard } from '@/routes';
-import { route as ziggyRoute } from 'ziggy-js';
-import { Ziggy } from '../ziggy.js';
 import DashboardUserRow from './DashboardUserRow.vue';
 
+const importForm = useForm<{ file: File | null }>({
+    file: null,
+});
 
-const route = (name: string, params?: Record<string, unknown>): string =>
-    String(
-        (ziggyRoute as (n: string, p?: object, abs?: boolean, c?: object) => unknown)(
-            name,
-            params ?? {},
-            false,
-            Ziggy,
-        ),
-    );
+function onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    importForm.file = input.files?.[0] ?? null;
+}
+
+function submitImport(): void {
+    importForm.post('/users/import', {
+        forceFormData: true,
+        onError: (errors) => {
+            for (const msg of Object.values(errors)) {
+                toast.error(String(msg));
+            }
+        },
+    });
+}
 
 type User = {
     id: number;
@@ -70,9 +78,25 @@ defineOptions({
                 <PlaceholderPattern />
             </div>
             <div
-                class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
+                class="relative flex aspect-video flex-col justify-center gap-3 overflow-hidden rounded-xl border border-sidebar-border/70 p-4 dark:border-sidebar-border"
             >
-                
+                <p class="text-sm font-medium">导入用户</p>
+                <p class="text-xs text-muted-foreground">
+                    CSV / Excel，三列：姓名、邮箱、密码（无表头）
+                </p>
+                <input
+                    type="file"
+                    accept=".csv,.xlsx,.xls"
+                    class="text-xs"
+                    @change="onFileChange"
+                />
+                <Button
+                    size="sm"
+                    :disabled="!importForm.file || importForm.processing"
+                    @click="submitImport"
+                >
+                    {{ importForm.processing ? '导入中…' : '上传并导入' }}
+                </Button>
             </div>
         </div>
         <div

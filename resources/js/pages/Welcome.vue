@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
+import { Toaster } from '@/components/ui/sonner';
 import { dashboard, login, register } from '@/routes';
 
 withDefaults(
@@ -448,5 +449,6 @@ withDefaults(
             </main>
         </div>
         <div class="hidden h-14.5 lg:block"></div>
+        <Toaster />
     </div>
 </template>
